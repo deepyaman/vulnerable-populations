@@ -36,7 +36,7 @@ from typing import Dict
 
 from kedro.pipeline import Pipeline, pipeline
 
-from vulnerable_populations.pipelines import data_engineering
+from vulnerable_populations.pipelines import data_engineering, preprocessing
 
 
 class LowerName(Enum):
@@ -68,6 +68,14 @@ def create_pipelines(**kwargs) -> Dict[str, Pipeline]:
             namespace=granularity,
         )
         pipelines[f"{granularity.value}.data_engineering"] = data_engineering_pipeline
+
+        preprocessing_pipeline = pipeline(
+            preprocessing.create_pipeline(),
+            inputs={"int_csbh_data": f"int_csbh_{granularity.value}_data"},
+            outputs={"mod_covid_19_master": f"mod_covid_19_{granularity.value}_master"},
+            namespace=granularity,
+        )
+        pipelines[f"{granularity.value}.preprocessing"] = preprocessing_pipeline
 
     pipelines["__default__"] = reduce(add, pipelines.values())
     return pipelines

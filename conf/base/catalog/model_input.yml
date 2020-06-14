@@ -1,0 +1,11 @@
+_mod_parquet: &mod_parquet
+  type: pandas.ParquetDataSet
+  layer: model_input
+
+mod_covid_19_county_level_master:
+  <<: *mod_parquet
+  filepath: data/05_model_input/covid-19/county-level-master.parquet.snappy
+
+mod_covid_19_state_level_master:
+  <<: *mod_parquet
+  filepath: data/05_model_input/covid-19/state-level-master.parquet.snappy

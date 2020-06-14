@@ -33,6 +33,10 @@ generated using Kedro 0.16.1
 
 from kedro.pipeline import Pipeline, node
 
+from .nodes import dropna
 
-def create_pipeline(**kwargs):
-    return Pipeline([])
+
+def create_pipeline(**kwargs) -> Pipeline:
+    return Pipeline(
+        [node(func=dropna, inputs="int_csbh_data", outputs="mod_covid_19_master")]
+    )
