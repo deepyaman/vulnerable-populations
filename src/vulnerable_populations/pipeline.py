@@ -29,9 +29,24 @@
 """Construction of the master pipeline.
 """
 
+from enum import Enum, auto
+from functools import reduce
+from operator import add
 from typing import Dict
 
-from kedro.pipeline import Pipeline
+from kedro.pipeline import Pipeline, pipeline
+
+from vulnerable_populations.pipelines import data_engineering
+
+
+class LowerName(Enum):
+    def _generate_next_value_(name, start, count, last_values):
+        return name.lower()
+
+
+class Granularity(LowerName):
+    COUNTY_LEVEL = auto()
+    STATE_LEVEL = auto()
 
 
 def create_pipelines(**kwargs) -> Dict[str, Pipeline]:
@@ -44,5 +59,15 @@ def create_pipelines(**kwargs) -> Dict[str, Pipeline]:
         A mapping from a pipeline name to a ``Pipeline`` object.
 
     """
+    pipelines = {}
+    for granularity in Granularity:
+        data_engineering_pipeline = pipeline(
+            data_engineering.create_pipeline(),
+            inputs={"raw_csbh_data": f"raw_csbh_{granularity.value}_data"},
+            outputs={"int_csbh_data": f"int_csbh_{granularity.value}_data"},
+            namespace=granularity,
+        )
+        pipelines[f"{granularity.value}.data_engineering"] = data_engineering_pipeline
 
-    return {"__default__": Pipeline([])}
+    pipelines["__default__"] = reduce(add, pipelines.values())
+    return pipelines
