@@ -6,9 +6,12 @@ jupyter>=1.0.0, <2.0
 jupyter_client>=5.1.0, <6.0
 jupyterlab==0.31.1
 kedro[pandas.CSVDataSet,pandas.ParquetDataSet]==0.16.1
+matplotlib==3.2.1
 nbstripout==0.3.3
 pandas>=0.24, <1.0.4  # https://github.com/pandas-dev/pandas/issues/34467
 pytest-cov>=2.5, <3.0
 pytest-mock>=1.7.1,<2.0
 pytest>=3.4, <4.0
+shap==0.35.0
 wheel==0.32.2
+xgboost<1.1  # https://github.com/slundberg/shap/issues/1215
