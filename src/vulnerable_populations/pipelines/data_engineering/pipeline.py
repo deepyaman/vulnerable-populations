@@ -33,6 +33,16 @@ generated using Kedro 0.16.1
 
 from kedro.pipeline import Pipeline, node
 
+from .nodes import percentage_to_numeric
 
-def create_pipeline(**kwargs):
-    return Pipeline([])
+
+def create_pipeline(**kwargs) -> Pipeline:
+    return Pipeline(
+        [
+            node(
+                func=percentage_to_numeric,
+                inputs="raw_csbh_data",
+                outputs="int_csbh_data",
+            ),
+        ]
+    )
