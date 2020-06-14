@@ -31,12 +31,32 @@ This is a boilerplate pipeline 'preprocessing'
 generated using Kedro 0.16.1
 """
 
+from enum import Enum
+from functools import partial
+
 from kedro.pipeline import Pipeline, node
 
-from .nodes import dropna
+from .nodes import dropna, filter_rows
+
+INSURANCE_TYPE = "Insurance Type (Relevant for Clinical Data from Claims Only)"
+
+
+class InsuranceType(Enum):
+    ALL = "All"
+    MEDICARE_FFS = "Medicare FFS"
 
 
 def create_pipeline(**kwargs) -> Pipeline:
     return Pipeline(
-        [node(func=dropna, inputs="int_csbh_data", outputs="mod_covid_19_master")]
+        [
+            node(
+                func=partial(
+                    filter_rows, filters={INSURANCE_TYPE: [InsuranceType.ALL.value]},
+                ),
+                inputs="int_csbh_data",
+                outputs="mem_filtered",
+                name="Drop near-duplicate rows pertaining to a specific insurance type",
+            ),
+            node(func=dropna, inputs="mem_filtered", outputs="mod_covid_19_master"),
+        ]
     )
