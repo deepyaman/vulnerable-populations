@@ -32,7 +32,7 @@ def filter_rows(
 
 
 def dropna(df: pd.DataFrame) -> pd.DataFrame:
-    """Call the `pandas.DataFrame.dropna` method with default arguments.
+    """Call `pandas.DataFrame.dropna`, ignoring any always-null columns.
 
     Args:
         df: A pandas DataFrame optionally containing NA entries to drop.
@@ -41,4 +41,4 @@ def dropna(df: pd.DataFrame) -> pd.DataFrame:
         The input DataFrame with rows containing missing values removed.
 
     """
-    return df.dropna()
+    return df.dropna(subset=df.columns[df.notna().any()])
